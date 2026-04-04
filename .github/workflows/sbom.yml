@@ -1,0 +1,82 @@
+name: SBOM & Attestation
+
+on:
+  push:
+    branches: [main, master]
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  sbom:
+    name: Generate & Sign SBOM
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      # Generate CycloneDX SBOM from npm lockfile
+      - name: Generate CycloneDX SBOM (JSON)
+        run: npx --yes @cyclonedx/cyclonedx-npm --output-format JSON --output-file devcipher-sbom.cyclonedx.json
+
+      # Generate SPDX SBOM using Syft
+      - name: Install Syft
+        uses: anchore/sbom-action/download-syft@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
+
+      - name: Generate SPDX SBOM via Syft
+        uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
+        with:
+          path: .
+          format: spdx-json
+          output-file: devcipher-sbom.spdx.json
+          artifact-name: devcipher-sbom.spdx.json
+
+      # Attest build provenance — signs with Sigstore via GitHub's OIDC token
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@520d128f165991a6c774bcf27c732aed1e4233f # v2.2.0
+        with:
+          subject-path: out/
+
+      # Attest the SBOM itself
+      - name: Attest SBOM
+        uses: actions/attest-sbom@115c3be05ff3974bcbd5dc4f7b8a0b0ec1c89b85 # v2.2.0
+        with:
+          subject-path: out/
+          sbom-path: devcipher-sbom.cyclonedx.json
+
+      # Upload SBOMs as workflow artifacts
+      - name: Upload SBOMs
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        with:
+          name: sbom-${{ github.sha }}
+          path: |
+            devcipher-sbom.cyclonedx.json
+            devcipher-sbom.spdx.json
+          retention-days: 90
+
+      # Attach SBOMs to GitHub Release if this is a release event
+      - name: Upload SBOMs to Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@c062e08bd532815e2082a85e87e3ef29c3e6d191 # v2.2.0
+        with:
+          files: |
+            devcipher-sbom.cyclonedx.json
+            devcipher-sbom.spdx.json

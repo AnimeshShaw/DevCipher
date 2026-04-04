@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import AppShell from '@/components/layout/AppShell'
 import { CATEGORIES } from '@/lib/tools-config'
-import { Hash, Lock, Code2, FileJson, ArrowLeftRight, Sparkles, Zap, Shield, Globe, Terminal, RefreshCw } from 'lucide-react'
+import { Hash, Lock, Code2, FileJson, ArrowLeftRight, Sparkles, Zap, Shield, Terminal, RefreshCw } from 'lucide-react'
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   hash: Hash, lock: Lock, 'code-2': Code2,
@@ -27,18 +27,18 @@ export default function HomePage() {
           <span>{totalTools}+ tools — all free, all client-side</span>
         </div>
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
-          CryptoLab{' '}
+          Dev
           <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            Online Tools
+            Cipher
           </span>
         </h1>
         <p className="text-zinc-400 text-lg max-w-2xl mx-auto leading-relaxed">
-          Professional cryptography, hashing, encoding, and formatting tools.
+          Professional cryptography, hashing, encoding, and developer tools.
           Everything runs in your browser — no data ever leaves your device.
         </p>
         <div className="flex items-center justify-center gap-2 mt-4">
           <Shield className="h-4 w-4 text-emerald-400" />
-          <span className="text-sm text-emerald-400">100% client-side • No server uploads • Privacy first</span>
+          <span className="text-sm text-emerald-400">100% client-side · No server uploads · Privacy first</span>
         </div>
       </div>
 
@@ -88,8 +88,10 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="mt-16 pt-8 border-t border-zinc-800 text-center">
         <p className="text-sm text-zinc-500">
-          Developed by{' '}
+          Built by{' '}
           <span className="text-zinc-300 font-semibold">Animesh Shaw</span>
+          {' · '}
+          <Link href="/about" className="text-zinc-400 hover:text-zinc-200 transition-colors">About & Support</Link>
         </p>
         <p className="text-xs text-zinc-600 mt-1">All computations are performed locally in your browser.</p>
       </footer>

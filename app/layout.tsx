@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 import './globals.css'
 
-const BASE_URL = 'https://cryptolabonline.com'
+const BASE_URL = 'https://devcipher.dev'
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'CryptoLab Online — Free Cryptography & Developer Tools',
-    template: '%s — CryptoLab Online',
+    default: 'DevCipher — Free Cryptography & Developer Tools',
+    template: '%s — DevCipher',
   },
   description: 'Free online cryptography, hashing, encoding, and developer tools. SHA256, AES, JWT, Base64, UUID, bcrypt and 100+ more. All processing is local — no data leaves your browser.',
   keywords: [
@@ -19,15 +19,15 @@ export const metadata: Metadata = {
   creator: 'Animesh Shaw',
   openGraph: {
     type: 'website',
-    siteName: 'CryptoLab Online',
-    title: 'CryptoLab Online — Free Cryptography & Developer Tools',
+    siteName: 'DevCipher',
+    title: 'DevCipher — Free Cryptography & Developer Tools',
     description: 'Free online cryptography, hashing, encoding, and developer tools. 100+ tools, all local — no data leaves your browser.',
     url: BASE_URL,
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'CryptoLab Online Tools' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'DevCipher — Developer Tools' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'CryptoLab Online — Free Cryptography & Developer Tools',
+    title: 'DevCipher — Free Cryptography & Developer Tools',
     description: '100+ free cryptography, encoding, and developer tools. All local, no tracking.',
     images: ['/og-image.png'],
   },

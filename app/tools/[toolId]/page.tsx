@@ -13,13 +13,13 @@ export async function generateStaticParams() {
   return ALL_TOOLS.map((t) => ({ toolId: t.id }))
 }
 
-const BASE_URL = 'https://cryptolabonline.com'
+const BASE_URL = 'https://devcipher.dev'
 
 export async function generateMetadata({ params }: Props) {
   const { toolId } = await params
   const tool = findTool(toolId)
   if (!tool) return {}
-  const title = tool.seoTitle ?? `${tool.name} — CryptoLab Online`
+  const title = tool.seoTitle ?? `${tool.name} — DevCipher`
   const description = tool.seoDescription ?? `${tool.description} — Free online tool by Animesh Shaw. All processing is local — no data leaves your browser.`
   const url = `${BASE_URL}/tools/${tool.id}`
   return {
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props) {
       description,
       url,
       type: 'website',
-      siteName: 'CryptoLab Online',
+      siteName: 'DevCipher',
     },
     twitter: {
       card: 'summary',
@@ -61,7 +61,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 }
 
 function JsonLd({ tool }: { tool: ToolConfig }) {
-  const title = tool.seoTitle ?? `${tool.name} — CryptoLab Online`
+  const title = tool.seoTitle ?? `${tool.name} — DevCipher`
   const description = tool.seoDescription ?? `${tool.description} — Free online tool. All processing is local.`
   const data = {
     '@context': 'https://schema.org',

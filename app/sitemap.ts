@@ -1,7 +1,9 @@
 import { MetadataRoute } from 'next'
 import { ALL_TOOLS } from '@/lib/tools-config'
 
-const BASE_URL = 'https://cryptolabonline.com'
+export const dynamic = 'force-static'
+
+const BASE_URL = 'https://devcipher.dev'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const toolUrls: MetadataRoute.Sitemap = ALL_TOOLS.map((tool) => ({
@@ -17,6 +19,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 1,
+    },
+    {
+      url: `${BASE_URL}/about`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.5,
     },
     ...toolUrls,
   ]
