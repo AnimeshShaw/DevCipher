@@ -12,6 +12,22 @@ const CaseTool = dynamic(() => import('./CaseTool'), { ssr: false })
 const QRCodeTool = dynamic(() => import('./QRCodeTool'), { ssr: false })
 const SyntaxTool = dynamic(() => import('./SyntaxTool'), { ssr: false })
 
+// New tools
+const JWTTool = dynamic(() => import('./JWTTool'), { ssr: false })
+const UUIDTool = dynamic(() => import('./UUIDTool'), { ssr: false })
+const PasswordStrengthTool = dynamic(() => import('./PasswordStrengthTool'), { ssr: false })
+const PasswordHashTool = dynamic(() => import('./PasswordHashTool'), { ssr: false })
+const HashIdentifierTool = dynamic(() => import('./HashIdentifierTool'), { ssr: false })
+const CertInspectorTool = dynamic(() => import('./CertInspectorTool'), { ssr: false })
+const BaseConverterTool = dynamic(() => import('./BaseConverterTool'), { ssr: false })
+const ColorConverterTool = dynamic(() => import('./ColorConverterTool'), { ssr: false })
+const TimestampTool = dynamic(() => import('./TimestampTool'), { ssr: false })
+const DiffTool = dynamic(() => import('./DiffTool'), { ssr: false })
+const RegexTool = dynamic(() => import('./RegexTool'), { ssr: false })
+const LoremTool = dynamic(() => import('./LoremTool'), { ssr: false })
+const CronTool = dynamic(() => import('./CronTool'), { ssr: false })
+const IPTool = dynamic(() => import('./IPTool'), { ssr: false })
+
 const HASH_ALGORITHMS: Record<string, { name: string; desc?: string; isFile?: boolean; hasOutputLen?: boolean; hasCshakeOptions?: boolean; hasKmacKey?: boolean }> = {
   'crc':           { name: 'CRC-32', desc: 'CRC-32 cyclic redundancy check — error detection, not cryptographic' },
   'crc-file':      { name: 'CRC-32 File', isFile: true, desc: 'CRC-32 for file integrity checks' },
@@ -126,5 +142,22 @@ export default function ToolRenderer({ toolId }: { toolId: string }) {
   if (toolId === 'case-converter') return <CaseTool />
   if (toolId === 'qrcode') return <QRCodeTool />
   if (toolId === 'syntax-highlight') return <SyntaxTool />
+
+  // New tools
+  if (toolId === 'jwt') return <JWTTool />
+  if (toolId === 'uuid') return <UUIDTool />
+  if (toolId === 'password-strength') return <PasswordStrengthTool />
+  if (toolId === 'password-hash') return <PasswordHashTool />
+  if (toolId === 'hash-id') return <HashIdentifierTool />
+  if (toolId === 'cert-inspector') return <CertInspectorTool />
+  if (toolId === 'base-converter') return <BaseConverterTool />
+  if (toolId === 'color-converter') return <ColorConverterTool />
+  if (toolId === 'timestamp') return <TimestampTool />
+  if (toolId === 'diff') return <DiffTool />
+  if (toolId === 'regex') return <RegexTool />
+  if (toolId === 'lorem') return <LoremTool />
+  if (toolId === 'cron') return <CronTool />
+  if (toolId === 'ip-tools') return <IPTool />
+
   return <div className="text-zinc-500 text-sm">Tool not found</div>
 }

@@ -4,7 +4,10 @@ export interface ToolConfig {
   description: string
   category: string
   tags?: string[]
-  variant?: string // 'text' | 'file' | 'encode' | 'decode' | 'encrypt' | 'decrypt' | 'keygen' | 'sign' | 'verify'
+  variant?: string
+  seoTitle?: string        // override for <title> tag
+  seoDescription?: string  // override for meta description
+  keywords?: string        // comma-separated keywords
 }
 
 export interface CategoryConfig {
@@ -173,7 +176,11 @@ export const CATEGORIES: CategoryConfig[] = [
     icon: 'arrow-left-right',
     color: 'text-orange-400',
     tools: [
-      { id: 'case-converter', name: 'Case Converter', description: 'Convert text between cases', category: 'convert' },
+      { id: 'case-converter', name: 'Case Converter', description: 'Convert text between 11 case styles', category: 'convert' },
+      { id: 'base-converter', name: 'Number Base Converter', description: 'Binary, octal, decimal, hex and arbitrary bases', category: 'convert', seoTitle: 'Number Base Converter — Binary, Octal, Decimal, Hex Online', keywords: 'binary to decimal, hex converter, base converter online, number system converter' },
+      { id: 'color-converter', name: 'Color Converter', description: 'HEX, RGB, HSL, HSV, OKLCH color conversion', category: 'convert', seoTitle: 'Color Converter — HEX RGB HSL HSV OKLCH Online Free', keywords: 'hex to rgb, rgb to hsl, color code converter, css color converter' },
+      { id: 'timestamp', name: 'Timestamp Converter', description: 'Unix timestamp ↔ human-readable date', category: 'convert', seoTitle: 'Unix Timestamp Converter — Epoch to Date Online', keywords: 'unix timestamp converter, epoch time converter, timestamp to date online' },
+      { id: 'ip-tools', name: 'IP Address Tools', description: 'CIDR calculator, subnet mask, IPv4↔IPv6', category: 'convert', seoTitle: 'IP Address & Subnet Calculator — CIDR Online Tool', keywords: 'cidr calculator, subnet calculator, ip address converter, ipv4 to ipv6' },
     ],
   },
   {
@@ -182,8 +189,26 @@ export const CATEGORIES: CategoryConfig[] = [
     icon: 'sparkles',
     color: 'text-cyan-400',
     tools: [
-      { id: 'qrcode', name: 'QR Code Generator', description: 'Generate styled QR codes', category: 'other' },
-      { id: 'syntax-highlight', name: 'Syntax Highlight', description: 'Syntax highlighting for code', category: 'other' },
+      { id: 'qrcode', name: 'QR Code Generator', description: 'Generate styled QR codes — SVG, PNG, JPEG', category: 'other', seoTitle: 'QR Code Generator Free — No Signup, Custom Styles', keywords: 'qr code generator free no signup, qr code creator online, custom qr code' },
+      { id: 'syntax-highlight', name: 'Syntax Highlighter', description: 'Syntax highlighting for 36 languages', category: 'other' },
+      { id: 'diff', name: 'Text Diff Tool', description: 'Side-by-side text and line diff', category: 'other', seoTitle: 'Text Diff Tool Online — Compare Text Side by Side', keywords: 'text diff online, compare two texts, line diff tool, text comparison' },
+      { id: 'regex', name: 'Regex Tester', description: 'Test regex with match highlighting and groups', category: 'other', seoTitle: 'Regex Tester Online — Test Regular Expressions Free', keywords: 'regex tester online, regular expression tester, regex match highlighter' },
+      { id: 'lorem', name: 'Lorem Ipsum Generator', description: 'Generate placeholder text and random data', category: 'other', seoTitle: 'Lorem Ipsum Generator — Random Text & Data Online', keywords: 'lorem ipsum generator, random text generator, placeholder text' },
+      { id: 'cron', name: 'Cron Expression Parser', description: 'Parse cron expressions — human-readable + next runs', category: 'other', seoTitle: 'Cron Expression Parser — Human Readable Cron Online', keywords: 'cron expression parser, cron to human readable, cron next occurrence' },
+    ],
+  },
+  {
+    id: 'developer',
+    label: 'Developer Tools',
+    icon: 'terminal',
+    color: 'text-violet-400',
+    tools: [
+      { id: 'jwt', name: 'JWT Decoder / Verifier', description: 'Decode, encode and verify JSON Web Tokens', category: 'developer', seoTitle: 'JWT Decoder Online — Decode, Encode & Verify JSON Web Tokens', keywords: 'jwt decoder online, jwt verifier, decode jwt token, json web token parser' },
+      { id: 'uuid', name: 'UUID Generator', description: 'Generate UUID v1, v3, v4, v5 — bulk generation', category: 'developer', seoTitle: 'UUID Generator Online — v1 v3 v4 v5 Free', keywords: 'uuid generator online, generate uuid v4, bulk uuid generator, guid generator' },
+      { id: 'password-strength', name: 'Password Strength Analyzer', description: 'Entropy, crack time estimate, pattern detection', category: 'developer', seoTitle: 'Password Strength Checker — Entropy & Crack Time Estimator', keywords: 'password strength checker, password entropy calculator, crack time estimator' },
+      { id: 'password-hash', name: 'Password Hasher', description: 'Hash passwords with bcrypt, scrypt, PBKDF2', category: 'developer', seoTitle: 'Password Hasher Online — bcrypt, scrypt, PBKDF2', keywords: 'bcrypt online, password hash generator, bcrypt hash, scrypt hash, pbkdf2 online' },
+      { id: 'hash-id', name: 'Hash Identifier', description: 'Identify hash algorithm from any hash string', category: 'developer', seoTitle: 'Hash Identifier Online — Identify Any Hash Algorithm', keywords: 'hash identifier, identify hash type, what hash is this, hash algorithm detector' },
+      { id: 'cert-inspector', name: 'Certificate Inspector', description: 'Parse X.509 PEM certificates — subject, SANs, expiry', category: 'developer', seoTitle: 'SSL Certificate Inspector — Parse PEM Certificate Online', keywords: 'ssl certificate viewer, x509 certificate parser, pem certificate decoder, cert inspector' },
     ],
   },
 ]

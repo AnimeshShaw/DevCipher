@@ -1,18 +1,19 @@
 import Link from 'next/link'
 import AppShell from '@/components/layout/AppShell'
 import { CATEGORIES } from '@/lib/tools-config'
-import { Hash, Lock, Code2, FileJson, ArrowLeftRight, Sparkles, Zap, Shield, Globe } from 'lucide-react'
+import { Hash, Lock, Code2, FileJson, ArrowLeftRight, Sparkles, Zap, Shield, Globe, Terminal, RefreshCw } from 'lucide-react'
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   hash: Hash, lock: Lock, 'code-2': Code2,
   'file-json': FileJson, 'arrow-left-right': ArrowLeftRight, sparkles: Sparkles,
+  terminal: Terminal, 'refresh-cw': RefreshCw,
 }
 
 const stats = [
   { icon: Hash, label: 'Hash Algorithms', value: '30+' },
   { icon: Lock, label: 'Crypto Tools', value: '16' },
-  { icon: Code2, label: 'Encoding Tools', value: '20' },
-  { icon: Globe, label: 'Format Tools', value: '10+' },
+  { icon: Code2, label: 'Encoding Formats', value: '20+' },
+  { icon: Terminal, label: 'Developer Tools', value: '14+' },
 ]
 
 export default function HomePage() {

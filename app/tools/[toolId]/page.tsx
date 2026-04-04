@@ -13,13 +13,32 @@ export async function generateStaticParams() {
   return ALL_TOOLS.map((t) => ({ toolId: t.id }))
 }
 
+const BASE_URL = 'https://cryptolabonline.com'
+
 export async function generateMetadata({ params }: Props) {
   const { toolId } = await params
   const tool = findTool(toolId)
   if (!tool) return {}
+  const title = tool.seoTitle ?? `${tool.name} — CryptoLab Online`
+  const description = tool.seoDescription ?? `${tool.description} — Free online tool by Animesh Shaw. All processing is local — no data leaves your browser.`
+  const url = `${BASE_URL}/tools/${tool.id}`
   return {
-    title: `${tool.name} — CryptoLab Online Tools`,
-    description: `${tool.description} — Free online tool by Animesh Shaw`,
+    title,
+    description,
+    keywords: tool.keywords,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'website',
+      siteName: 'CryptoLab Online',
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+    },
   }
 }
 
@@ -36,6 +55,26 @@ const CATEGORY_COLORS: Record<string, string> = {
   asymmetric: 'text-amber-400 bg-amber-900/20 border-amber-800/40',
   encoding: 'text-emerald-400 bg-emerald-900/20 border-emerald-800/40',
   utilities: 'text-sky-400 bg-sky-900/20 border-sky-800/40',
+  convert: 'text-cyan-400 bg-cyan-900/20 border-cyan-800/40',
+  other: 'text-rose-400 bg-rose-900/20 border-rose-800/40',
+  developer: 'text-violet-400 bg-violet-900/20 border-violet-800/40',
+}
+
+function JsonLd({ tool }: { tool: ToolConfig }) {
+  const title = tool.seoTitle ?? `${tool.name} — CryptoLab Online`
+  const description = tool.seoDescription ?? `${tool.description} — Free online tool. All processing is local.`
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: title,
+    description,
+    url: `${BASE_URL}/tools/${tool.id}`,
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'Any',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    author: { '@type': 'Person', name: 'Animesh Shaw' },
+  }
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
 }
 
 export default async function ToolPage({ params }: Props) {
@@ -47,6 +86,7 @@ export default async function ToolPage({ params }: Props) {
 
   return (
     <AppShell title={tool.name}>
+      <JsonLd tool={tool} />
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1 text-xs text-zinc-500 mb-5">
         <Link href="/" className="hover:text-zinc-300 transition-colors">Home</Link>
