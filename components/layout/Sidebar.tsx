@@ -71,8 +71,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               <Zap className="h-4 w-4 text-white" />
             </div>
             <div>
-              <p className="text-sm font-bold text-white leading-none">CryptoLab</p>
-              <p className="text-[10px] text-zinc-500 leading-none mt-0.5">Online Tools</p>
+              <p className="text-sm font-bold text-white leading-none">
+                Dev<span className="text-indigo-400">Cipher</span>
+              </p>
+              <p className="text-[10px] text-zinc-500 leading-none mt-0.5">devcipher.dev</p>
             </div>
           </Link>
           <button
