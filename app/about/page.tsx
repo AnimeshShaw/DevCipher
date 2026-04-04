@@ -82,7 +82,7 @@ export default function AboutPage() {
           </p>
           <div className="pt-2">
             <a
-              href="https://github.com/animeshshaw"
+              href="https://github.com/AnimeshShaw"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
@@ -136,7 +136,7 @@ export default function AboutPage() {
             attested with Sigstore so you can verify the exact artifact matches the source code.
           </p>
           <a
-            href="https://github.com/animeshshaw/devcipher"
+            href="https://github.com/AnimeshShaw/DevCipher"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors"
