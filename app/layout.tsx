@@ -23,13 +23,11 @@ export const metadata: Metadata = {
     title: 'DevCipher — Free Cryptography & Developer Tools',
     description: 'Free online cryptography, hashing, encoding, and developer tools. 100+ tools, all local — no data leaves your browser.',
     url: BASE_URL,
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'DevCipher — Developer Tools' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'DevCipher — Free Cryptography & Developer Tools',
     description: '100+ free cryptography, encoding, and developer tools. All local, no tracking.',
-    images: ['/og-image.png'],
   },
   robots: {
     index: true,
