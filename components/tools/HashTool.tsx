@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
   Copy, Check, Upload, Trash2, RefreshCw, Share2, Hash,
-  ChevronDown, ChevronUp, AlertCircle, FileText
+  AlertCircle, FileText, Keyboard
 } from 'lucide-react'
 
 interface HashToolProps {
@@ -18,7 +18,7 @@ interface HashToolProps {
   algorithmName: string
   description?: string
   isFile?: boolean
-  hasOutputLen?: boolean  // SHAKE, cSHAKE, KMAC
+  hasOutputLen?: boolean
   hasCshakeOptions?: boolean
   hasKmacKey?: boolean
 }
@@ -53,7 +53,6 @@ export default function HashTool({
   const [fileBytes, setFileBytes] = useState<Uint8Array | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [showAdvanced, setShowAdvanced] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Load remembered input
@@ -69,29 +68,20 @@ export default function HashTool({
   const compute = useCallback(async (inputData?: string, fileData?: Uint8Array | null) => {
     const data = fileData !== undefined ? fileData : fileBytes
     const text = inputData !== undefined ? inputData : input
-
     try {
       setIsProcessing(true)
       setError('')
       let bytes: Uint8Array
-
       if (isFile && data) {
         bytes = data
       } else if (!isFile) {
         if (!text.trim() && !text) { setOutput(''); return }
         bytes = encodeInput(text, inputEncoding)
       } else {
-        setOutput('')
-        return
+        setOutput(''); return
       }
-
-      const hmacKeyBytes = hmacEnabled && hmacKey
-        ? encodeInput(hmacKey, hmacKeyEncoding)
-        : undefined
-      const kmacKeyBytes = hasKmacKey && kmacKey
-        ? encodeInput(kmacKey, kmacKeyEncoding)
-        : undefined
-
+      const hmacKeyBytes = hmacEnabled && hmacKey ? encodeInput(hmacKey, hmacKeyEncoding) : undefined
+      const kmacKeyBytes = hasKmacKey && kmacKey ? encodeInput(kmacKey, kmacKeyEncoding) : undefined
       const result = await computeHash(algorithmId, bytes, {
         outputFormat,
         outputLen: hasOutputLen ? outputLen : undefined,
@@ -118,6 +108,18 @@ export default function HashTool({
     if (autoUpdate) compute()
   }, [input, inputEncoding, outputFormat, outputLen, hmacEnabled, hmacKey,
     hmacKeyEncoding, cshakeN, cshakeS, kmacKey, kmacKeyEncoding, autoUpdate, compute])
+
+  // Ctrl+Enter shortcut
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault()
+        compute()
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [compute])
 
   const handleFileSelect = async (file: File) => {
     setFileInfo({ name: file.name, size: file.size })
@@ -166,13 +168,113 @@ export default function HashTool({
 
   return (
     <div className="space-y-4">
-      {/* Description */}
       {description && (
         <p className="text-sm text-zinc-400 bg-zinc-900/50 border border-zinc-800 rounded-lg px-4 py-2.5">{description}</p>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-[1fr,280px]">
-        {/* Main area */}
+      {/* Config LEFT | IO RIGHT */}
+      <div className="grid gap-4 lg:grid-cols-[280px,1fr]">
+
+        {/* ── Settings Panel (Left) ── */}
+        <div className="space-y-3">
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 space-y-4">
+            <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Settings</h3>
+
+            {/* Output Format */}
+            <div className="space-y-1.5">
+              <label className="text-xs text-zinc-400">Output Format</label>
+              <Select value={outputFormat} onValueChange={setOutputFormat}>
+                <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {OUTPUT_FORMATS.map((fmt) => (
+                    <SelectItem key={fmt} value={fmt} className="text-xs">{fmt}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Output Length for XOF */}
+            {hasOutputLen && (
+              <div className="space-y-1.5">
+                <label className="text-xs text-zinc-400">Output Length (bytes)</label>
+                <Input
+                  type="number"
+                  value={outputLen}
+                  onChange={(e) => setOutputLen(Math.max(1, Math.min(512, parseInt(e.target.value) || 32)))}
+                  className="h-8 text-xs"
+                  min={1} max={512}
+                />
+              </div>
+            )}
+
+            {/* cSHAKE options */}
+            {hasCshakeOptions && (
+              <>
+                <div className="space-y-1.5">
+                  <label className="text-xs text-zinc-400">Function Name (N)</label>
+                  <Input value={cshakeN} onChange={(e) => setCshakeN(e.target.value)} placeholder="Optional" className="h-8 text-xs" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs text-zinc-400">Customization (S)</label>
+                  <Input value={cshakeS} onChange={(e) => setCshakeS(e.target.value)} placeholder="Optional" className="h-8 text-xs" />
+                </div>
+              </>
+            )}
+
+            {/* HMAC Toggle */}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-zinc-300">Enable HMAC</p>
+                <p className="text-[10px] text-zinc-600">Hash-based message auth</p>
+              </div>
+              <Switch checked={hmacEnabled} onCheckedChange={setHmacEnabled} />
+            </div>
+
+            {/* Auto Update */}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-zinc-300">Auto Update</p>
+                <p className="text-[10px] text-zinc-600">Update as you type</p>
+              </div>
+              <Switch checked={autoUpdate} onCheckedChange={setAutoUpdate} />
+            </div>
+
+            {/* Remember Input */}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-zinc-300">Remember Input</p>
+                <p className="text-[10px] text-zinc-600">Save across sessions</p>
+              </div>
+              <Switch checked={rememberInput} onCheckedChange={handleRememberChange} />
+            </div>
+
+            {!autoUpdate && (
+              <Button onClick={() => compute()} className="w-full h-8 text-xs" disabled={isProcessing}>
+                {isProcessing
+                  ? <><RefreshCw className="h-3.5 w-3.5 animate-spin" /> Computing...</>
+                  : <><Hash className="h-3.5 w-3.5" /> Compute Hash</>
+                }
+              </Button>
+            )}
+
+            <div className="pt-2 border-t border-zinc-800">
+              <Button variant="outline" size="sm" className="w-full text-xs h-7" onClick={handleCopyShare}>
+                {copiedShare
+                  ? <><Check className="h-3 w-3 text-emerald-400" /> Copied!</>
+                  : <><Share2 className="h-3 w-3" /> Copy Share Link</>
+                }
+              </Button>
+            </div>
+          </div>
+
+          {/* Keyboard hint */}
+          <div className="flex items-center gap-1.5 px-1 text-[11px] text-zinc-600">
+            <Keyboard className="h-3 w-3" />
+            <span><kbd className="font-mono">Ctrl</kbd>+<kbd className="font-mono">Enter</kbd> to compute</span>
+          </div>
+        </div>
+
+        {/* ── Main IO Area (Right) ── */}
         <div className="space-y-3">
           {/* Input */}
           <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
@@ -210,12 +312,8 @@ export default function HashTool({
                   isDragging ? 'bg-blue-900/20 border-blue-600' : 'hover:bg-zinc-800/50'
                 }`}
               >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  className="hidden"
-                  onChange={(e) => e.target.files?.[0] && handleFileSelect(e.target.files[0])}
-                />
+                <input ref={fileInputRef} type="file" className="hidden"
+                  onChange={(e) => e.target.files?.[0] && handleFileSelect(e.target.files[0])} />
                 {fileInfo ? (
                   <div className="text-center">
                     <div className="h-10 w-10 rounded-lg bg-blue-900/30 border border-blue-800 flex items-center justify-center mx-auto mb-2">
@@ -237,7 +335,7 @@ export default function HashTool({
                 value={input}
                 onChange={(e) => handleInputChange(e.target.value)}
                 placeholder={`Enter text to ${algorithmName}...`}
-                className="min-h-[140px] border-0 rounded-none bg-transparent focus-visible:ring-0 resize-none"
+                className="min-h-[160px] border-0 rounded-none bg-transparent focus-visible:ring-0 resize-none"
               />
             )}
           </div>
@@ -248,9 +346,7 @@ export default function HashTool({
               <div className="flex items-center justify-between px-3 py-2 border-b border-amber-800/30">
                 <span className="text-xs font-medium text-amber-400">HMAC Key</span>
                 <Select value={hmacKeyEncoding} onValueChange={setHmacKeyEncoding}>
-                  <SelectTrigger className="h-6 w-28 text-[11px] border-zinc-700 bg-zinc-800">
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger className="h-6 w-28 text-[11px] border-zinc-700 bg-zinc-800"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {['UTF-8', 'Hex', 'Base64', 'Latin-1'].map((enc) => (
                       <SelectItem key={enc} value={enc} className="text-xs">{enc}</SelectItem>
@@ -258,12 +354,8 @@ export default function HashTool({
                   </SelectContent>
                 </Select>
               </div>
-              <Input
-                value={hmacKey}
-                onChange={(e) => setHmacKey(e.target.value)}
-                placeholder="Enter HMAC key..."
-                className="border-0 rounded-none bg-transparent focus-visible:ring-0"
-              />
+              <Input value={hmacKey} onChange={(e) => setHmacKey(e.target.value)}
+                placeholder="Enter HMAC key..." className="border-0 rounded-none bg-transparent focus-visible:ring-0" />
             </div>
           )}
 
@@ -273,9 +365,7 @@ export default function HashTool({
               <div className="flex items-center justify-between px-3 py-2 border-b border-purple-800/30">
                 <span className="text-xs font-medium text-purple-400">KMAC Key</span>
                 <Select value={kmacKeyEncoding} onValueChange={setKmacKeyEncoding}>
-                  <SelectTrigger className="h-6 w-28 text-[11px] border-zinc-700 bg-zinc-800">
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger className="h-6 w-28 text-[11px] border-zinc-700 bg-zinc-800"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {['UTF-8', 'Hex', 'Base64'].map((enc) => (
                       <SelectItem key={enc} value={enc} className="text-xs">{enc}</SelectItem>
@@ -283,12 +373,8 @@ export default function HashTool({
                   </SelectContent>
                 </Select>
               </div>
-              <Input
-                value={kmacKey}
-                onChange={(e) => setKmacKey(e.target.value)}
-                placeholder="Enter KMAC key..."
-                className="border-0 rounded-none bg-transparent focus-visible:ring-0"
-              />
+              <Input value={kmacKey} onChange={(e) => setKmacKey(e.target.value)}
+                placeholder="Enter KMAC key..." className="border-0 rounded-none bg-transparent focus-visible:ring-0" />
             </div>
           )}
 
@@ -296,16 +382,12 @@ export default function HashTool({
           <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
             <div className="flex items-center justify-between px-3 py-2 border-b border-zinc-800 bg-zinc-900">
               <span className="text-xs font-medium text-zinc-400 flex items-center gap-1.5">
-                <Hash className="h-3.5 w-3.5" />
-                Output
+                <Hash className="h-3.5 w-3.5" /> Output
               </span>
               <div className="flex items-center gap-1.5">
                 {isProcessing && <RefreshCw className="h-3.5 w-3.5 text-blue-400 animate-spin" />}
-                <button
-                  onClick={handleCopy}
-                  disabled={!output}
-                  className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-200 disabled:opacity-30 px-2 py-0.5 rounded hover:bg-zinc-800 transition-colors"
-                >
+                <button onClick={handleCopy} disabled={!output}
+                  className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-200 disabled:opacity-30 px-2 py-0.5 rounded hover:bg-zinc-800 transition-colors">
                   {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                   {copied ? 'Copied!' : 'Copy'}
                 </button>
@@ -314,8 +396,7 @@ export default function HashTool({
             <div className="relative min-h-[60px] p-3">
               {error ? (
                 <div className="flex items-center gap-2 text-red-400 text-xs">
-                  <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                  <span>{error}</span>
+                  <AlertCircle className="h-4 w-4 flex-shrink-0" /><span>{error}</span>
                 </div>
               ) : output ? (
                 <p className="font-mono text-xs text-emerald-300 break-all leading-relaxed">{output}</p>
@@ -323,137 +404,6 @@ export default function HashTool({
                 <p className="text-xs text-zinc-600 italic">Output will appear here...</p>
               )}
             </div>
-          </div>
-        </div>
-
-        {/* Settings Panel */}
-        <div className="space-y-3">
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 space-y-4">
-            <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Settings</h3>
-
-            {/* Output Format */}
-            <div className="space-y-1.5">
-              <label className="text-xs text-zinc-400">Output Format</label>
-              <Select value={outputFormat} onValueChange={setOutputFormat}>
-                <SelectTrigger className="h-8 text-xs">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {OUTPUT_FORMATS.map((fmt) => (
-                    <SelectItem key={fmt} value={fmt} className="text-xs">{fmt}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Output Length for XOF */}
-            {hasOutputLen && (
-              <div className="space-y-1.5">
-                <label className="text-xs text-zinc-400">Output Length (bytes)</label>
-                <Input
-                  type="number"
-                  value={outputLen}
-                  onChange={(e) => setOutputLen(Math.max(1, Math.min(512, parseInt(e.target.value) || 32)))}
-                  className="h-8 text-xs"
-                  min={1}
-                  max={512}
-                />
-              </div>
-            )}
-
-            {/* cSHAKE options */}
-            {hasCshakeOptions && (
-              <>
-                <div className="space-y-1.5">
-                  <label className="text-xs text-zinc-400">Function Name (N)</label>
-                  <Input
-                    value={cshakeN}
-                    onChange={(e) => setCshakeN(e.target.value)}
-                    placeholder="Optional function name"
-                    className="h-8 text-xs"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs text-zinc-400">Customization (S)</label>
-                  <Input
-                    value={cshakeS}
-                    onChange={(e) => setCshakeS(e.target.value)}
-                    placeholder="Optional customization"
-                    className="h-8 text-xs"
-                  />
-                </div>
-              </>
-            )}
-
-            {/* HMAC Toggle */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-zinc-300">Enable HMAC</p>
-                <p className="text-[10px] text-zinc-600">Hash-based message auth</p>
-              </div>
-              <Switch checked={hmacEnabled} onCheckedChange={setHmacEnabled} />
-            </div>
-
-            {/* Auto Update */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-zinc-300">Auto Update</p>
-                <p className="text-[10px] text-zinc-600">Update as you type</p>
-              </div>
-              <Switch checked={autoUpdate} onCheckedChange={setAutoUpdate} />
-            </div>
-
-            {/* Remember Input */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-zinc-300">Remember Input</p>
-                <p className="text-[10px] text-zinc-600">Save across sessions</p>
-              </div>
-              <Switch checked={rememberInput} onCheckedChange={handleRememberChange} />
-            </div>
-
-            {/* Manual compute button when auto-update is off */}
-            {!autoUpdate && (
-              <Button onClick={() => compute()} className="w-full h-8 text-xs" disabled={isProcessing}>
-                {isProcessing ? (
-                  <><RefreshCw className="h-3.5 w-3.5 animate-spin" /> Computing...</>
-                ) : (
-                  <><Hash className="h-3.5 w-3.5" /> Compute Hash</>
-                )}
-              </Button>
-            )}
-
-            {/* Share Link */}
-            <div className="pt-2 border-t border-zinc-800">
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full text-xs h-7"
-                onClick={handleCopyShare}
-              >
-                {copiedShare
-                  ? <><Check className="h-3 w-3 text-emerald-400" /> Copied!</>
-                  : <><Share2 className="h-3 w-3" /> Copy Share Link</>
-                }
-              </Button>
-            </div>
-          </div>
-
-          {/* Algorithm Info */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
-            <button
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex items-center justify-between w-full text-xs text-zinc-400 hover:text-zinc-200"
-            >
-              <span className="font-medium">About {algorithmName}</span>
-              {showAdvanced ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-            </button>
-            {showAdvanced && (
-              <div className="mt-3 space-y-1.5 text-[11px] text-zinc-500">
-                {description && <p>{description}</p>}
-                <p className="text-zinc-600">All computations are performed locally in your browser. No data is sent to any server.</p>
-              </div>
-            )}
           </div>
         </div>
       </div>

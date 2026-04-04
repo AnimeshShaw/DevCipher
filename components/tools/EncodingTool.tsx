@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { Copy, Check, Upload, Download, AlertCircle, ArrowUpDown, FileText, RefreshCw } from 'lucide-react'
+import { Copy, Check, Upload, Download, AlertCircle, ArrowUpDown, FileText, RefreshCw, Keyboard } from 'lucide-react'
 
 interface Props { toolId: string }
 
@@ -33,7 +33,6 @@ export default function EncodingTool({ toolId }: Props) {
   const isFileDecode = toolId.endsWith('-file-decode')
   const isFileEncode = toolId === toolId.replace(/-file$/, '-file') && isFile && !isFileDecode
 
-  // Determine which encoding scheme
   const scheme = toolId.replace(/-encode$/, '').replace(/-decode$/, '').replace(/-file-decode$/, '').replace(/-file$/, '')
 
   const [input, setInput] = useState('')
@@ -56,7 +55,6 @@ export default function EncodingTool({ toolId }: Props) {
       if (isFile) {
         if (!fb && !isFileDecode) { setOutput(''); return }
         if (isFileDecode) {
-          // Decode text → file bytes
           const decodedRaw = computeDecode(scheme, text.trim(), base64Format)
           const decoded = decodedRaw instanceof Uint8Array ? decodedRaw : new TextEncoder().encode(String(decodedRaw))
           setOutput(`${decoded.length} bytes decoded`)
@@ -82,6 +80,15 @@ export default function EncodingTool({ toolId }: Props) {
 
   useEffect(() => { if (autoUpdate && !isFile) compute() }, [input, base64Format, autoUpdate, compute, isFile])
 
+  // Ctrl+Enter shortcut
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); compute() }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [compute])
+
   const handleFileSelect = async (file: File) => {
     setFileInfo({ name: file.name, size: file.size })
     const bytes = await readFileAsBytes(file)
@@ -101,7 +108,67 @@ export default function EncodingTool({ toolId }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 lg:grid-cols-[1fr,260px]">
+      {/* Config LEFT | IO RIGHT */}
+      <div className="grid gap-4 lg:grid-cols-[260px,1fr]">
+
+        {/* ── Settings Panel (Left) ── */}
+        <div className="space-y-3">
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 space-y-4 h-fit">
+            <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Settings</h3>
+
+            {/* Base64 standard — only shown once, here in the panel */}
+            {scheme === 'base64' && (
+              <div className="space-y-1.5">
+                <label className="text-xs text-zinc-400">Base64 Standard</label>
+                <Select value={base64Format} onValueChange={(v) => setBase64Format(v as Base64Format)}>
+                  <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {BASE64_FORMATS.map((f) => (
+                      <SelectItem key={f} value={f} className="text-xs">{BASE64_FORMAT_LABELS[f]}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {!isFile && (
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-medium text-zinc-300">Auto Update</p>
+                  <p className="text-[10px] text-zinc-600">Update as you type</p>
+                </div>
+                <Switch checked={autoUpdate} onCheckedChange={setAutoUpdate} />
+              </div>
+            )}
+
+            {!autoUpdate && !isFile && (
+              <Button onClick={() => compute()} className="w-full h-8 text-xs">
+                <RefreshCw className="h-3.5 w-3.5" />
+                {isEncode ? 'Encode' : 'Decode'}
+              </Button>
+            )}
+
+            {isFile && !isFileDecode && (
+              <Button onClick={() => compute()} disabled={!fileBytes} className="w-full h-8 text-xs">
+                <ArrowUpDown className="h-3.5 w-3.5" />
+                {isEncode ? 'Encode File' : 'Decode File'}
+              </Button>
+            )}
+
+            {isFileDecode && (
+              <Button onClick={() => compute()} disabled={!input.trim()} className="w-full h-8 text-xs">
+                <Download className="h-3.5 w-3.5" /> Decode to File
+              </Button>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1.5 px-1 text-[11px] text-zinc-600">
+            <Keyboard className="h-3 w-3" />
+            <span><kbd className="font-mono">Ctrl</kbd>+<kbd className="font-mono">Enter</kbd> to {isEncode ? 'encode' : 'decode'}</span>
+          </div>
+        </div>
+
+        {/* ── IO Area (Right) ── */}
         <div className="space-y-3">
           {/* Input */}
           <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
@@ -109,18 +176,6 @@ export default function EncodingTool({ toolId }: Props) {
               <span className="text-xs font-medium text-zinc-400">
                 {isFile ? 'File' : (isEncode ? 'Input' : 'Encoded Input')}
               </span>
-              {scheme === 'base64' && !isFile && (
-                <Select value={base64Format} onValueChange={(v) => setBase64Format(v as Base64Format)}>
-                  <SelectTrigger className="h-6 w-44 text-[11px] border-zinc-700 bg-zinc-800">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {BASE64_FORMATS.map((f) => (
-                      <SelectItem key={f} value={f} className="text-xs">{BASE64_FORMAT_LABELS[f]}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
             </div>
 
             {isFile ? (
@@ -155,26 +210,16 @@ export default function EncodingTool({ toolId }: Props) {
             )}
           </div>
 
-          {/* Decode to file: show text input */}
+          {/* Decode to file: text input */}
           {isFileDecode && (
             <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
               <div className="flex items-center px-3 py-2 border-b border-zinc-800 bg-zinc-900">
                 <span className="text-xs font-medium text-zinc-400">Encoded Text</span>
               </div>
-              <Textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
+              <Textarea value={input} onChange={(e) => setInput(e.target.value)}
                 placeholder="Paste encoded text..."
-                className="min-h-[100px] border-0 rounded-none bg-transparent focus-visible:ring-0"
-              />
+                className="min-h-[100px] border-0 rounded-none bg-transparent focus-visible:ring-0" />
             </div>
-          )}
-
-          {!autoUpdate && !isFile && (
-            <Button onClick={() => compute()} className="w-full h-8 text-xs">
-              <RefreshCw className="h-3.5 w-3.5" />
-              {isEncode ? 'Encode' : 'Decode'}
-            </Button>
           )}
 
           {/* Output */}
@@ -207,48 +252,6 @@ export default function EncodingTool({ toolId }: Props) {
               )}
             </div>
           </div>
-        </div>
-
-        {/* Settings */}
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 space-y-4 h-fit">
-          <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Settings</h3>
-
-          {scheme === 'base64' && (
-            <div className="space-y-1.5">
-              <label className="text-xs text-zinc-400">Base64 Standard</label>
-              <Select value={base64Format} onValueChange={(v) => setBase64Format(v as Base64Format)}>
-                <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {BASE64_FORMATS.map((f) => (
-                    <SelectItem key={f} value={f} className="text-xs">{BASE64_FORMAT_LABELS[f]}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {!isFile && (
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-zinc-300">Auto Update</p>
-                <p className="text-[10px] text-zinc-600">Update as you type</p>
-              </div>
-              <Switch checked={autoUpdate} onCheckedChange={setAutoUpdate} />
-            </div>
-          )}
-
-          {isFile && !isFileDecode && (
-            <Button onClick={() => compute()} disabled={!fileBytes} className="w-full h-8 text-xs">
-              <ArrowUpDown className="h-3.5 w-3.5" />
-              {isEncode ? 'Encode File' : 'Decode File'}
-            </Button>
-          )}
-
-          {isFileDecode && (
-            <Button onClick={() => compute()} disabled={!input.trim()} className="w-full h-8 text-xs">
-              <Download className="h-3.5 w-3.5" /> Decode to File
-            </Button>
-          )}
         </div>
       </div>
     </div>
