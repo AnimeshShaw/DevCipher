@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import AppShell from '@/components/layout/AppShell'
 import Link from 'next/link'
-import { ChevronRight, Mail, Github, Linkedin, MessageSquare, Bug, Lightbulb, Heart } from 'lucide-react'
+import { ChevronRight, Mail, ExternalLink, Link2, MessageSquare, Bug, Lightbulb, Heart } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -68,7 +68,7 @@ export default function ContactPage() {
                 bg: 'bg-yellow-900/20 border-yellow-800/40 hover:bg-yellow-900/30',
               },
               {
-                icon: Github,
+                icon: ExternalLink,
                 label: 'View All Issues',
                 href: 'https://github.com/AnimeshShaw/DevCipher/issues',
                 color: 'text-zinc-300',
@@ -101,7 +101,7 @@ export default function ContactPage() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors"
           >
-            <Linkedin className="h-4 w-4" />
+            <Link2 className="h-4 w-4" />
             linkedin.com/in/animeshshaw
           </a>
         </div>

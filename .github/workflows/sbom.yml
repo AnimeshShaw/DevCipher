@@ -51,7 +51,7 @@ jobs:
 
       # Attest build provenance — signs with Sigstore via GitHub's OIDC token
       - name: Attest build provenance
-        uses: uses: actions/attest-build-provenance@v2.2.0 # v2.2.0
+        uses: actions/attest-build-provenance@v2.2.0 # v2.2.0
         with:
           subject-path: out/
 
