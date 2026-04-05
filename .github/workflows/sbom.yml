@@ -49,17 +49,21 @@ jobs:
           output-file: devcipher-sbom.spdx.json
           artifact-name: devcipher-sbom.spdx.json
 
+      # Archive the static export into a single tarball (attestation has a 1024-subject limit)
+      - name: Archive static export
+        run: tar -czf devcipher-out.tar.gz out/
+
       # Attest build provenance — signs with Sigstore via GitHub's OIDC token
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v2.2.0 # v2.2.0
         with:
-          subject-path: out/
+          subject-path: devcipher-out.tar.gz
 
       # Attest the SBOM itself
       - name: Attest SBOM
         uses: actions/attest-sbom@v2.2.0 # v2.2.0
         with:
-          subject-path: out/
+          subject-path: devcipher-out.tar.gz
           sbom-path: devcipher-sbom.cyclonedx.json
 
       # Upload SBOMs as workflow artifacts
@@ -80,3 +84,4 @@ jobs:
           files: |
             devcipher-sbom.cyclonedx.json
             devcipher-sbom.spdx.json
+            devcipher-out.tar.gz
