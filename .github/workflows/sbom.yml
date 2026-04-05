@@ -51,13 +51,13 @@ jobs:
 
       # Attest build provenance — signs with Sigstore via GitHub's OIDC token
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@520d128f165991a6c774bcf27c732aed1e4233f # v2.2.0
+        uses: uses: actions/attest-build-provenance@v2.2.0 # v2.2.0
         with:
           subject-path: out/
 
       # Attest the SBOM itself
       - name: Attest SBOM
-        uses: actions/attest-sbom@115c3be05ff3974bcbd5dc4f7b8a0b0ec1c89b85 # v2.2.0
+        uses: actions/attest-sbom@v2.2.0 # v2.2.0
         with:
           subject-path: out/
           sbom-path: devcipher-sbom.cyclonedx.json
