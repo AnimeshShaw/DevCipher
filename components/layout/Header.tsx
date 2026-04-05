@@ -21,7 +21,7 @@ export default function Header({ onMenuClick, title }: HeaderProps) {
         )}
       </div>
       <a
-        href="https://github.com"
+        href="https://github.com/AnimeshShaw/DevCipher"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors"

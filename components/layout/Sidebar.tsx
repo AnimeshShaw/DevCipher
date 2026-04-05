@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import { CATEGORIES } from '@/lib/tools-config'
 import {
   Hash, Lock, Code2, FileJson, ArrowLeftRight, Sparkles,
-  ChevronDown, ChevronRight, Search, X, Zap
+  ChevronDown, ChevronRight, Search, X, Zap, Coffee
 } from 'lucide-react'
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -152,7 +152,15 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-zinc-800/80 px-4 py-3">
+        <div className="border-t border-zinc-800/80 px-3 py-3 space-y-2">
+          <Link
+            href="/about"
+            onClick={() => window.innerWidth < 1024 && onClose()}
+            className="flex items-center justify-center gap-2 w-full rounded-lg bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 hover:border-amber-500/50 px-3 py-2 text-xs font-semibold text-amber-400 transition-all"
+          >
+            <Coffee className="h-3.5 w-3.5" />
+            Support DevCipher ☕
+          </Link>
           <p className="text-[10px] text-zinc-600 text-center">
             Built by <span className="text-zinc-400 font-medium">Animesh Shaw</span>
           </p>
