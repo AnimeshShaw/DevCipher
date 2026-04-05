@@ -161,6 +161,23 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             <Coffee className="h-3.5 w-3.5" />
             Support DevCipher ☕
           </Link>
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            {[
+              { href: '/contact', label: 'Contact' },
+              { href: '/privacy', label: 'Privacy' },
+              { href: '/terms', label: 'Terms' },
+              { href: '/cookies', label: 'Cookies' },
+            ].map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => window.innerWidth < 1024 && onClose()}
+                className="text-[10px] text-zinc-600 hover:text-zinc-400 transition-colors"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
           <p className="text-[10px] text-zinc-600 text-center">
             Built by <span className="text-zinc-400 font-medium">Animesh Shaw</span>
           </p>
