@@ -37,8 +37,10 @@ export default function ImageBase64Tool() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const isImageDataUri = (str: string) => /^data:image\/(png|jpeg|jpg|webp|gif|svg\+xml);base64,/i.test(str.trim()) || /^data:image\//i.test(str.trim())
+
   const downloadImage = () => {
-    if (!dataUri) return
+    if (!dataUri || !isImageDataUri(dataUri)) return
     const a = document.createElement('a')
     a.href = dataUri
     a.download = fileName || 'image_from_base64.png'
@@ -82,7 +84,7 @@ export default function ImageBase64Tool() {
       </div>
 
       {/* Preview & Stats */}
-      {dataUri && (
+      {dataUri && isImageDataUri(dataUri) && (
         <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4 space-y-4 animate-in fade-in duration-150">
           <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-zinc-800 pb-3">
             <div className="flex items-center gap-4 text-zinc-400">
