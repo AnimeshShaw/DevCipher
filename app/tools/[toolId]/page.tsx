@@ -109,6 +109,29 @@ export default async function ToolPage({ params }: Props) {
       {/* Tool Content */}
       <ToolRenderer toolId={toolId} />
 
+      {/* Programmatic Educational SEO & Security Guarantee Section */}
+      <section className="mt-12 pt-8 border-t border-zinc-800/80 space-y-4">
+        <h2 className="text-lg font-semibold text-zinc-200">About {tool.name}</h2>
+        <p className="text-xs text-zinc-400 leading-relaxed">
+          The <strong>{tool.name}</strong> tool allows developers, security auditors, and engineers to perform {tool.description.toLowerCase()} in a secure, instant, and private manner.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4 space-y-2">
+            <h3 className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">🔒 100% Client-Side Privacy</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              All computations, key generations, hashing, and conversions are calculated locally inside your web browser. No plain text, secret keys, or uploaded files ever leave your device or reach an external server.
+            </p>
+          </div>
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4 space-y-2">
+            <h3 className="text-xs font-semibold text-blue-400 uppercase tracking-wider">⚡ Offline & PWA Ready</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              DevCipher is fully usable offline and in air-gapped security environments. Install it as a Desktop Progressive Web App (PWA) via your browser's install menu.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Related Tools */}
       {related.length > 0 && (
         <div className="mt-10 pt-8 border-t border-zinc-800">

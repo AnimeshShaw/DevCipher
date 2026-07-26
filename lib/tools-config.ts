@@ -125,6 +125,8 @@ export const CATEGORIES: CategoryConfig[] = [
       { id: 'rsa-verify', name: 'RSA Verify', description: 'Verify RSA signatures', category: 'crypto', variant: 'verify' },
       { id: 'rsa-encrypt', name: 'RSA Encrypt', description: 'RSA encryption', category: 'crypto', variant: 'encrypt' },
       { id: 'rsa-decrypt', name: 'RSA Decrypt', description: 'RSA decryption', category: 'crypto', variant: 'decrypt' },
+      { id: 'hmac', name: 'HMAC Generator', description: 'Keyed-hash message authentication code (SHA2, SHA3, BLAKE2)', category: 'crypto', seoTitle: 'HMAC Generator Online — SHA256 SHA512 BLAKE2 Keyed Hashing', keywords: 'hmac generator online, hmac sha256 online, keyed hash generator' },
+      { id: 'pqc', name: 'Post-Quantum Cryptography', description: 'NIST PQC standards (ML-KEM, ML-DSA, SLH-DSA) key inspector', category: 'crypto', seoTitle: 'Post-Quantum Cryptography (PQC) Key Inspector — Kyber & Dilithium', keywords: 'post quantum cryptography, ml-kem, ml-dsa, kyber 768, dilithium, fips 203' },
     ],
   },
   {
@@ -149,6 +151,7 @@ export const CATEGORIES: CategoryConfig[] = [
       { id: 'base64-decode', name: 'Base64 Decode', description: 'Base64 to text', category: 'encoding', variant: 'decode' },
       { id: 'base64-file', name: 'File to Base64', description: 'File to Base64', category: 'encoding', variant: 'file' },
       { id: 'base64-file-decode', name: 'Base64 to File', description: 'Base64 to file', category: 'encoding', variant: 'file' },
+      { id: 'image-base64', name: 'Image to Base64 / Data URI', description: 'Convert image to Base64 data URI & preview', category: 'encoding', seoTitle: 'Image to Base64 Converter — Data URI Generator Online', keywords: 'image to base64, data uri generator, base64 image preview' },
       { id: 'html-encode', name: 'HTML Encode', description: 'HTML entity encoding', category: 'encoding', variant: 'encode' },
       { id: 'html-decode', name: 'HTML Decode', description: 'HTML entity decoding', category: 'encoding', variant: 'decode' },
       { id: 'url-encode', name: 'URL Encode', description: 'URL percent encoding', category: 'encoding', variant: 'encode' },
@@ -168,6 +171,7 @@ export const CATEGORIES: CategoryConfig[] = [
       { id: 'xml-validator', name: 'XML Validator', description: 'Validate XML syntax', category: 'format' },
       { id: 'xml-minifier', name: 'XML Minifier', description: 'Minify XML', category: 'format' },
       { id: 'xml-formatter', name: 'XML Formatter', description: 'Format and beautify XML', category: 'format' },
+      { id: 'sql-tool', name: 'SQL Formatter & Sanitizer', description: 'Beautify, minify, and sanitize SQL queries', category: 'format', seoTitle: 'SQL Formatter Online — Beautify, Minify & Sanitize SQL', keywords: 'sql formatter online, beautify sql query, sanitize sql' },
     ],
   },
   {
@@ -209,6 +213,7 @@ export const CATEGORIES: CategoryConfig[] = [
       { id: 'password-hash', name: 'Password Hasher', description: 'Hash passwords with bcrypt, scrypt, PBKDF2', category: 'developer', seoTitle: 'Password Hasher Online — bcrypt, scrypt, PBKDF2', keywords: 'bcrypt online, password hash generator, bcrypt hash, scrypt hash, pbkdf2 online' },
       { id: 'hash-id', name: 'Hash Identifier', description: 'Identify hash algorithm from any hash string', category: 'developer', seoTitle: 'Hash Identifier Online — Identify Any Hash Algorithm', keywords: 'hash identifier, identify hash type, what hash is this, hash algorithm detector' },
       { id: 'cert-inspector', name: 'Certificate Inspector', description: 'Parse X.509 PEM certificates — subject, SANs, expiry', category: 'developer', seoTitle: 'SSL Certificate Inspector — Parse PEM Certificate Online', keywords: 'ssl certificate viewer, x509 certificate parser, pem certificate decoder, cert inspector' },
+      { id: 'curl', name: 'cURL to Code Converter', description: 'Convert cURL commands to Fetch, Python, Go, Node', category: 'developer', seoTitle: 'cURL to Code Converter — Convert cURL to Fetch, Python, Go', keywords: 'curl to fetch, curl to python, convert curl command online' },
     ],
   },
 ]

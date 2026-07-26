@@ -1,0 +1,17 @@
+{
+  "name": "DevCipher — Privacy-First Developer Tools",
+  "short_name": "DevCipher",
+  "description": "Free, 100% client-side cryptography, hashing, encoding, and developer tools.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "icons": [
+    {
+      "src": "/icon",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

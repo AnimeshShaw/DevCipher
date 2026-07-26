@@ -27,6 +27,11 @@ const RegexTool = dynamic(() => import('./RegexTool'), { ssr: false })
 const LoremTool = dynamic(() => import('./LoremTool'), { ssr: false })
 const CronTool = dynamic(() => import('./CronTool'), { ssr: false })
 const IPTool = dynamic(() => import('./IPTool'), { ssr: false })
+const HmacTool = dynamic(() => import('./HmacTool'), { ssr: false })
+const PQCTool = dynamic(() => import('./PQCTool'), { ssr: false })
+const CurlTool = dynamic(() => import('./CurlTool'), { ssr: false })
+const ImageBase64Tool = dynamic(() => import('./ImageBase64Tool'), { ssr: false })
+const SqlTool = dynamic(() => import('./SqlTool'), { ssr: false })
 
 const HASH_ALGORITHMS: Record<string, { name: string; desc?: string; isFile?: boolean; hasOutputLen?: boolean; hasCshakeOptions?: boolean; hasKmacKey?: boolean }> = {
   'crc':           { name: 'CRC-32', desc: 'CRC-32 cyclic redundancy check — error detection, not cryptographic' },
@@ -158,6 +163,11 @@ export default function ToolRenderer({ toolId }: { toolId: string }) {
   if (toolId === 'lorem') return <LoremTool />
   if (toolId === 'cron') return <CronTool />
   if (toolId === 'ip-tools') return <IPTool />
+  if (toolId === 'hmac') return <HmacTool />
+  if (toolId === 'pqc') return <PQCTool />
+  if (toolId === 'curl') return <CurlTool />
+  if (toolId === 'image-base64') return <ImageBase64Tool />
+  if (toolId === 'sql-tool') return <SqlTool />
 
   return <div className="text-zinc-500 text-sm">Tool not found</div>
 }
